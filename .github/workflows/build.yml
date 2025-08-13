@@ -126,9 +126,19 @@ jobs:
       if: runner.os == 'Linux' || runner.os == 'macOS'
       run: ccache --zero-stats --show-stats
 
-    - name: Build
+    - name: (Linux, macOS) Build
+      if: runner.os == 'Linux' || runner.os == 'macOS'
       env:
         CMAKE_PREFIX_PATH: ${{ env.QT_PREFIX != '' && env.QT_PREFIX || env.MINGW_BASE_DIR }}
+      run: |
+        chmod +x $GITHUB_WORKSPACE/CI/build.sh
+        $GITHUB_WORKSPACE/CI/build.sh
+
+    - name: (Windows) Build
+      if: runner.os == 'Windows'
+      env:
+        CMAKE_PREFIX_PATH: ${{ env.QT_PREFIX != '' && env.QT_PREFIX || env.MINGW_BASE_DIR }}
+      shell: msys2 {0}
       run: |
         chmod +x $GITHUB_WORKSPACE/CI/build.sh
         $GITHUB_WORKSPACE/CI/build.sh
