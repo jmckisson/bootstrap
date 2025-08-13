@@ -87,32 +87,32 @@ jobs:
         msystem: MINGW64
         update: true
     
-    - name: (Windows) Build Environment Setup
-      if: runner.os == 'Windows'
-      shell: msys2 {0}
-      run: |
-        $GITHUB_WORKSPACE/CI/setup-win-sdk.sh
-        echo "QT_ROOT=${{runner.workspace}}/qt-static-install" >> $GITHUB_ENV
+    #- name: (Windows) Build Environment Setup
+    #  if: runner.os == 'Windows'
+    #  shell: msys2 {0}
+    #  run: |
+    #    $GITHUB_WORKSPACE/CI/setup-win-sdk.sh
+    #    echo "QT_ROOT=${{runner.workspace}}/qt-static-install" >> $GITHUB_ENV
 
-    - name: (Windows) Restore Qt cache
-      if: runner.os == 'Windows'
-      id: restore-qt
-      uses: actions/cache/restore@v4
-      with:
-        path: ${{env.QT_ROOT}}
-        key: qt
+    #- name: (Windows) Restore Qt cache
+    #  if: runner.os == 'Windows'
+    #  id: restore-qt
+    #  uses: actions/cache/restore@v4
+    #  with:
+    #    path: ${{env.QT_ROOT}}
+    #    key: qt
 
-    - name: (Windows) Compile Qt
-      if: runner.os == 'Windows' && steps.restore-qt.outputs.cache-hit != 'true'
-      shell: msys2 {0}
-      run: $GITHUB_WORKSPACE/CI/compile-qt-win.sh
+    #- name: (Windows) Compile Qt
+    #  if: runner.os == 'Windows' && steps.restore-qt.outputs.cache-hit != 'true'
+    #  shell: msys2 {0}
+    #  run: $GITHUB_WORKSPACE/CI/compile-qt-win.sh
 
-    - name: (Windows) Save Qt cache
-      if: runner.os == 'Windows' && steps.restore-qt.outputs.cache-hit != 'true'
-      uses: actions/cache/save@v4
-      with:
-        path: ${{env.QT_ROOT}}
-        key: ${{ steps.restore-qt.outputs.cache-primary-key }}
+    #- name: (Windows) Save Qt cache
+    #  if: runner.os == 'Windows' && steps.restore-qt.outputs.cache-hit != 'true'
+    #  uses: actions/cache/save@v4
+    #  with:
+    #    path: ${{env.QT_ROOT}}
+    #    key: ${{ steps.restore-qt.outputs.cache-primary-key }}
 
     - name: Restore ccache
       id: restore-ccache
@@ -126,18 +126,17 @@ jobs:
       if: runner.os == 'Linux' || runner.os == 'macOS'
       run: ccache --zero-stats --show-stats
 
-    - name: (macOS, Linux) Build
-      if: runner.os == 'Linux' || runner.os == 'macOS'
+    - name: Build
       env:
         CMAKE_PREFIX_PATH: ${{ env.QT_PREFIX != '' && env.QT_PREFIX || env.MINGW_BASE_DIR }}
       run: |
-        chmod +x $GITHUB_WORKSPACE/CI/build-mac-linux.sh
-        $GITHUB_WORKSPACE/CI/build-mac-linux.sh
+        chmod +x $GITHUB_WORKSPACE/CI/build.sh
+        $GITHUB_WORKSPACE/CI/build.sh
 
-    - name: (Windows) Build
-      if: runner.os == 'Windows'
-      shell: msys2 {0}
-      run: $GITHUB_WORKSPACE/CI/build-win.sh
+    #- name: (Windows) Build
+    #  if: runner.os == 'Windows'
+    #  shell: msys2 {0}
+    #  run: $GITHUB_WORKSPACE/CI/build-win.sh
 
     - name: Save ccache
       if: always() && steps.restore-ccache.outputs.cache-hit != 'true'
