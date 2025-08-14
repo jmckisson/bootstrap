@@ -73,7 +73,8 @@ while IFS= read -r line || [[ -n "$line" ]]; do
 
   # Move packaged files to the upload directory
   echo "=== Copying files to upload directory ==="
-  rsync -avR "${PACKAGE_DIR}"/./* "$uploadDirUnix"
+  #rsync -avR "${PACKAGE_DIR}"/./* "$uploadDirUnix"
+  cp -r "${PACKAGE_DIR}/"* "$uploadDirUnix"
 
   cd "$GITHUB_WORKSPACE" || exit 1
 
