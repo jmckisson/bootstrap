@@ -131,8 +131,8 @@ while true; do
     "mingw-w64-${BUILDCOMPONENT}-vulkan-headers" \
     "mingw-w64-${BUILDCOMPONENT}-libtiff" \
     "mingw-w64-${BUILDCOMPONENT}-qt6-virtualkeyboard" \
-    "mingw-w64-${BUILDCOMPONENT}-qt6-qt6-3d" \
-    "mingw-w64-${BUILDCOMPONENT}-qt6-qt6-quick3d" \
+    "mingw-w64-${BUILDCOMPONENT}-qt6-3d" \
+    "mingw-w64-${BUILDCOMPONENT}-qt6-quick3d" \
     "mingw-w64-${BUILDCOMPONENT}-qt6-static"; then
       break
   fi
