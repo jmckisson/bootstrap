@@ -137,18 +137,9 @@ jobs:
     - name: (Windows) Build
       if: runner.os == 'Windows'
       env:
-        CMAKE_PREFIX_PATH: /mingw64/qt6-static
+        CMAKE_PREFIX_PATH: ${{ env.QT_PREFIX != '' && env.QT_PREFIX || env.MINGW_BASE_DIR }}
       shell: msys2 {0}
       run: |
-        # Clean up unnecessary plugin cmake files to avoid CMake errors
-        echo "Cleaning up unused Qt plugin .cmake files..."
-        find "$CMAKE_PREFIX_PATH/lib/cmake/Qt6" -iname '*plugin*.cmake' -delete
-
-        echo "Cleaning up known problematic dependencies..."
-        find "$CMAKE_PREFIX_PATH/lib/cmake/Qt6"* -iname '*Dependencies.cmake' \
-          -exec grep -q -E "BundledOpenXR|3DLogic|Vulkan|TIFF|Jpeg|VirtualKeyboard" {} \; \
-          -exec rm -f {} +
-
         chmod +x $GITHUB_WORKSPACE/CI/build.sh
         $GITHUB_WORKSPACE/CI/build.sh
 

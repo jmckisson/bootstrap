@@ -127,6 +127,9 @@ while true; do
     "mingw-w64-${BUILDCOMPONENT}-pcre2" \
     "mingw-w64-${BUILDCOMPONENT}-libpng" \
     "mingw-w64-${BUILDCOMPONENT}-harfbuzz" \
+    "mingw-w64-${BUILDCOMPONENT}-libjpeg-turbo" \
+    "mingw-w64-${BUILDCOMPONENT}-vulkan-headers" \
+    "mingw-w64-${BUILDCOMPONENT}-libtiff" \
     "mingw-w64-${BUILDCOMPONENT}-qt6-static"; then
       break
   fi
