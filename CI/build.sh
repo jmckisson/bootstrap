@@ -46,7 +46,11 @@ while IFS= read -r line || [[ -n "$line" ]]; do
   echo "Running CMake configure..."
 
   echo "cmake -G Ninja -DCMAKE_BUILD_TYPE=Release .."
-  cmake -G Ninja -DCMAKE_BUILD_TYPE=Release ..
+  cmake -G Ninja -DCMAKE_BUILD_TYPE=Release \
+    -DQT_NO_CREATE_TARGETS_FOR_QT_PLUGINS=ON \
+    -DQt6_NO_GLOBAL_QML_PLUGIN_TARGETS=ON \
+    -DQt6_NO_CREATE_TARGETS_FOR_PLUGIN_TYPES=ON \
+    ..
 
   echo "Building.."
   ninja
