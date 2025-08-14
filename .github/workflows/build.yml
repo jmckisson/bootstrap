@@ -137,7 +137,7 @@ jobs:
     - name: (Windows) Build
       if: runner.os == 'Windows'
       env:
-        CMAKE_PREFIX_PATH: ${{ env.QT_PREFIX != '' && env.QT_PREFIX || env.MINGW_BASE_DIR }}
+        CMAKE_PREFIX_PATH: /mingw64/qt6-static
       shell: msys2 {0}
       run: |
         chmod +x $GITHUB_WORKSPACE/CI/build.sh

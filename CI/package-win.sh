@@ -113,6 +113,8 @@ while IFS= read -r line || [[ -n "$line" ]]; do
     cp "${GITHUB_WORKSPACE_UNIX_PATH}/build-${gameName}/MudletBootstrap.exe.debug" "${PACKAGE_DIR}/"
   fi
 
+  ldd ./MudletBootstrap.exe
+
   # we don't actually need to run windeployqt for a static build, it will in fact error out
   # saying it cannot find a qt executable
   #"${RUNNER_WORKSPACE}/qt-static-install/bin/windeployqt6" ./MudletBootstrap.exe
