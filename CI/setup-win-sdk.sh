@@ -133,6 +133,7 @@ while true; do
     "mingw-w64-${BUILDCOMPONENT}-qt6-virtualkeyboard" \
     "mingw-w64-${BUILDCOMPONENT}-qt6-3d" \
     "mingw-w64-${BUILDCOMPONENT}-qt6-quick3d" \
+    "mingw-w64-${BUILDCOMPONENT}-qt6-tools" \
     "mingw-w64-${BUILDCOMPONENT}-qt6-static"; then
       break
   fi
