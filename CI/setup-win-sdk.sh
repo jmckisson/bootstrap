@@ -126,6 +126,7 @@ while true; do
     "mingw-w64-${BUILDCOMPONENT}-ninja" \
     "mingw-w64-${BUILDCOMPONENT}-pcre2" \
     "mingw-w64-${BUILDCOMPONENT}-libpng" \
+    "mingw-w64-${BUILDCOMPONENT}-harfbuzz" \
     "mingw-w64-${BUILDCOMPONENT}-qt6-static"; then
       break
   fi
