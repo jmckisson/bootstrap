@@ -39,8 +39,8 @@ if(NOT Qt6LinguistTools_FOUND)
     find_path(Qt6LinguistTools_DIR
         NAMES Qt6LinguistToolsConfig.cmake
         PATHS
-            /mingw64/lib/cmake/Qt6LinguistTools
-            /mingw64/share/cmake/Qt6LinguistTools
+            /clang64/lib/cmake/Qt6LinguistTools
+            /clang64/share/cmake/Qt6LinguistTools
         NO_DEFAULT_PATH
     )
     if(Qt6LinguistTools_DIR)
@@ -83,23 +83,34 @@ target_link_libraries(MudletInstaller PRIVATE
 if(WIN32)
     if(DEFINED ENV{MINGW_PREFIX})
         # MINGW_PREFIX should be set by GHA
-        set(MSYS2_LIB_PATH "$ENV{MINGW_PREFIX}/lib")
+        # May be a Unix-style path when running outside MSYS2 shell
+        set(_MINGW_PREFIX "$ENV{MINGW_PREFIX}")
+        if(NOT _MINGW_PREFIX MATCHES "^[A-Za-z]:")
+            set(_MINGW_PREFIX "C:/msys64${_MINGW_PREFIX}")
+        endif()
+        set(MSYS2_LIB_PATH "${_MINGW_PREFIX}/lib")
         message(STATUS "Using MINGW_PREFIX: ${MSYS2_LIB_PATH}")
     elseif(DEFINED ENV{MSYSTEM_PREFIX})
         # MSYSTEM_PREFIX is another MSYS2 environment variable
-        set(MSYS2_LIB_PATH "$ENV{MSYSTEM_PREFIX}/lib")
+        # It may be a Unix-style path (e.g. /clang64) when running outside MSYS2 shell,
+        # so prepend MSYS2 root if the path doesn't look like a Windows absolute path
+        set(_MSYSTEM_PREFIX "$ENV{MSYSTEM_PREFIX}")
+        if(NOT _MSYSTEM_PREFIX MATCHES "^[A-Za-z]:")
+            set(_MSYSTEM_PREFIX "C:/msys64${_MSYSTEM_PREFIX}")
+        endif()
+        set(MSYS2_LIB_PATH "${_MSYSTEM_PREFIX}/lib")
         message(STATUS "Using MSYSTEM_PREFIX: ${MSYS2_LIB_PATH}")
-    elseif(EXISTS "D:/a/_temp/msys64/mingw64/lib")
+    elseif(EXISTS "D:/a/_temp/msys64/clang64/lib")
         # GHA path (D: drive)
-        set(MSYS2_LIB_PATH "D:/a/_temp/msys64/mingw64/lib")
+        set(MSYS2_LIB_PATH "D:/a/_temp/msys64/clang64/lib")
         message(STATUS "Using GitHub Actions D: path: ${MSYS2_LIB_PATH}")
-    elseif(EXISTS "C:/a/_temp/msys64/mingw64/lib")
+    elseif(EXISTS "C:/a/_temp/msys64/clang64/lib")
         # GHA path (C: drive)
-        set(MSYS2_LIB_PATH "C:/a/_temp/msys64/mingw64/lib")
+        set(MSYS2_LIB_PATH "C:/a/_temp/msys64/clang64/lib")
         message(STATUS "Using GitHub Actions C: path: ${MSYS2_LIB_PATH}")
-    elseif(EXISTS "C:/msys64/mingw64/lib")
+    elseif(EXISTS "C:/msys64/clang64/lib")
         # Local MSYS2 installation
-        set(MSYS2_LIB_PATH "C:/msys64/mingw64/lib")
+        set(MSYS2_LIB_PATH "C:/msys64/clang64/lib")
         message(STATUS "Using local MSYS2 path: ${MSYS2_LIB_PATH}")
     else()
         # Fallback: detect from compiler path

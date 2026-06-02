@@ -61,8 +61,21 @@ QString detectOS() {
 }
 
 
+// Returns the launch.ini to read settings from. An external launch.ini sitting
+// next to the executable takes precedence, which lets a single compiled binary
+// be configured for a given game without recompiling/relinking. If no external
+// file is present we fall back to the copy embedded in the Qt resources.
+QString launchIniPath() {
+    const QString external = QCoreApplication::applicationDirPath() + "/launch.ini";
+    if (QFile::exists(external)) {
+        return external;
+    }
+    return QStringLiteral(":/resources/launch.ini");
+}
+
+
 QString readLaunchProfileFromResource() {
-    QSettings settings(":/resources/launch.ini", QSettings::IniFormat);
+    QSettings settings(launchIniPath(), QSettings::IniFormat);
 
     QString profile = settings.value("Settings/MUDLET_PROFILES", "").toString();
 
@@ -246,7 +259,7 @@ void MudletInstaller::start() {
  */
 void MudletInstaller::fetchPlatformFeed() {
 
-    QSettings settings(":/resources/launch.ini", QSettings::IniFormat);
+    QSettings settings(launchIniPath(), QSettings::IniFormat);
 
     QString releaseType = settings.value("Settings/RELEASE_TYPE", "").toString();
 

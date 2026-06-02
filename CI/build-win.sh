@@ -1,6 +1,6 @@
 #!/bin/bash
 ###########################################################################
-#   Copyright (C) 2024-2024  by John McKisson - john.mckisson@gmail.com   #
+#   Copyright (C) 2024-2026  by John McKisson - john.mckisson@gmail.com   #
 #   Copyright (C) 2023-2024  by Stephen Lyons - slysven@virginmedia.com   #
 #                                                                         #
 #   This program is free software; you can redistribute it and/or modify  #
@@ -68,18 +68,13 @@ echo "Qt6_PREFIX is: ${Qt6_PREFIX}"
 echo "QT_DIR is: ${QT_DIR}"
 echo "QT_LINGUIST_DIR is: ${QT_LINGUIST_DIR}"
 
-echo "Building apps in GameList..."
-while IFS= read -r line || [[ -n "$line" ]]; do
-  gameName=$(echo "$line" | tr -cd '[:alnum:]_-')
-  gameDisplayName=$(echo "$line" | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')
-
-  rm -rf build-${gameName}
-  mkdir build-${gameName}
-  cd build-${gameName}
-
-  # Update the `launch.ini` file
-  echo "Updating ${LAUNCH_INI_PATH} for MUDLET_PROFILES=${gameDisplayName}..."
-  sed -i.bak "s/^MUDLET_PROFILES=.*/MUDLET_PROFILES=${gameDisplayName}/" "$LAUNCH_INI_PATH"
+# Configure ONCE in a single build tree. Every game produces an identical binary
+# apart from the embedded launch.ini, so we configure/compile once and only relink
+# per game further down. The bundled-Qt cmake fixups below also run just once.
+BUILD_DIR="${GITHUB_WORKSPACE}/build"
+rm -rf "${BUILD_DIR}"
+mkdir -p "${BUILD_DIR}"
+cd "${BUILD_DIR}" || exit 1
 
   # Check if Qt6Config.cmake exists
   QT_CONFIG_FILE="${RUNNER_WORKSPACE}/qt-static-install/lib/cmake/Qt6/Qt6Config.cmake"
@@ -197,17 +192,36 @@ EOF
     ..
 
   if [ $? -ne 0 ]; then
-    echo "CMake configuration failed for ${gameName}"
+    echo "CMake configuration failed"
     exit 1
   fi
 
 
-  echo "Building.."
-  ninja
+echo "Compiling base build..."
+ninja || exit 1
 
-  echo " ${gameName} ... build finished"
-  cd "$GITHUB_WORKSPACE" || exit 1
+echo "Assembling per-game launchers from GameList..."
+while IFS= read -r line || [[ -n "$line" ]]; do
+  gameName=$(echo "$line" | tr -cd '[:alnum:]_-')
+  gameDisplayName=$(echo "$line" | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')
 
+  # Bake this game's profile into the embedded launch.ini, then relink only.
+  echo "Updating ${LAUNCH_INI_PATH} for MUDLET_PROFILES=${gameDisplayName}..."
+  sed -i.bak "s/^MUDLET_PROFILES=.*/MUDLET_PROFILES=${gameDisplayName}/" "$LAUNCH_INI_PATH"
+
+  echo "Relinking for ${gameName}..."
+  ninja || exit 1
+
+  # Stage the artifact where package-win.sh expects it (build-<game>/)
+  OUT_DIR="${GITHUB_WORKSPACE}/build-${gameName}"
+  rm -rf "${OUT_DIR}"
+  mkdir -p "${OUT_DIR}"
+  cp "${BUILD_DIR}/MudletInstaller.exe" "${OUT_DIR}/"
+  if [ -f "${BUILD_DIR}/MudletInstaller.exe.debug" ]; then
+    cp "${BUILD_DIR}/MudletInstaller.exe.debug" "${OUT_DIR}/"
+  fi
+
+  echo " ${gameName} ... done"
 done < "${GITHUB_WORKSPACE}/GameList.txt"
 
 cd ~ || exit 1

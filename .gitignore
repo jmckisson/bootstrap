@@ -36,3 +36,9 @@ _deps
 
 build/*
 
+# Per-game launcher staging dirs produced by the CI build scripts
+build-*/
+
+# Backup left behind by `sed -i.bak` when baking the per-game profile
+resources/launch.ini.bak
+
