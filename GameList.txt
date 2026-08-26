@@ -13,9 +13,12 @@ BlackMUD
 Carrion Fields
 Cleft of Dimensions
 Clessidra
+DarkMists
 Dragonfire MUD
+Federation 2 Community Edition
 Fierymud
 God Wars II
+Icesus
 Imperian
 Infinity
 Legends of the Jedi
@@ -28,10 +31,14 @@ MorgenGrauen
 Mudren
 Multi-Users in Middle-earth
 Petria
+PhoenixMUD
+Pku XKX MUD
 Realms of Despair
 Reinos de Leyenda
+Rites of Passage MUD
 Slothmud
 Starmourn
 StickMUD
 WoTMUD
 ZombieMUD
+mg.mud.de
