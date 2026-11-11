@@ -11,10 +11,13 @@ BatMUD
 Beyond the Void MUD
 BlackMUD
 Carrion Fields
+ClamberMUD
 Cleft of Dimensions
 Clessidra
 DarkMists
 Dragonfire MUD
+DreamLand
+Fablerift
 Federation 2 Community Edition
 Fierymud
 God Wars II
